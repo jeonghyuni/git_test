@@ -55,6 +55,11 @@
                     <li><a href="intro.html" class="hover:text-sky-400 hover:underline transition-colors">About</a></li>
                     <li><a href="projects.html" class="text-sky-400 underline font-bold transition-colors">Projects</a></li>
                 </ul>
+
+                <!-- 다국어 토글 버튼 -->
+                <button onclick="toggleLanguage()" id="lang-btn" class="bg-sky-600 hover:bg-sky-500 px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors">
+                    🇺🇸 EN
+                </button>
                 
                 <!-- 다크모드 토글 버튼 -->
                 <button onclick="toggleDarkMode()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors">
@@ -67,16 +72,17 @@
     <!-- 메인 콘텐츠 영역 -->
     <main class="max-w-3xl w-full mx-auto px-4 py-8 flex-grow">
         <section class="bg-white/90 dark:bg-slate-800/90 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">Projects</h2>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6">그동안 진행해 온 주요 기술적 도전 과제들입니다.</p>
+            <h2 data-ko="Projects" data-en="Projects" class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">Projects</h2>
+            <p data-ko="그동안 진행해 온 주요 기술적 도전 과제들입니다." data-en="Here are the key technical challenges and projects I have undertaken." class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6">그동안 진행해 온 주요 기술적 도전 과제들입니다.</p>
+            
             <div class="space-y-6">
                 <div class="border-l-4 border-sky-500 pl-4 py-1">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">대규모 분산 결제 및 이상 탐지 시스템</h3>
-                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mt-1">대용량 트래픽과 데이터 처리를 고려하여 분산 환경에서 안정적으로 동작하도록 설계한 백엔드 아키텍처 프로젝트입니다.</p>
+                    <h3 data-ko="대규모 분산 결제 및 이상 탐지 시스템" data-en="Large-Scale Distributed Payment & Anomaly Detection" class="text-lg font-bold text-slate-900 dark:text-white">대규모 분산 결제 및 이상 탐지 시스템</h3>
+                    <p data-ko="대용량 트래픽과 데이터 처리를 고려하여 분산 환경에서 안정적으로 동작하도록 설계한 백엔드 아키텍처 프로젝트입니다." data-en="A backend architecture project designed to operate reliably in a distributed environment, factoring in massive traffic and data workloads." class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mt-1">대용량 트래픽과 데이터 처리를 고려하여 분산 환경에서 안정적으로 동작하도록 설계한 백엔드 아키텍처 프로젝트입니다.</p>
                 </div>
                 <div class="border-l-4 border-sky-500 pl-4 py-1">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">웹 스크레이핑 및 LLM 기반 데이터 파이프라인</h3>
-                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mt-1">비동기 웹 스크레이핑 기술을 활용해 데이터를 수집하고, 대형 언어 모델(LLM)과 연동하여 효율적인 데이터 처리 파이프라인을 구축한 프로젝트입니다.</p>
+                    <h3 data-ko="웹 스크레이핑 및 LLM 기반 데이터 파이프라인" data-en="Web Scraping & LLM-Based Data Pipeline" class="text-lg font-bold text-slate-900 dark:text-white">웹 스크레이핑 및 LLM 기반 데이터 파이프라인</h3>
+                    <p data-ko="비동기 웹 스크레이핑 기술을 활용해 데이터를 수집하고, 대형 언어 모델(LLM)과 연동하여 효율적인 데이터 처리 파이프라인을 구축한 프로젝트입니다." data-en="An efficient data pipeline that gathers web text via asynchronous scraping and integrates it with Large Language Models (LLMs) for smart summarization." class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mt-1">비동기 웹 스크레이핑 기술을 활용해 데이터를 수집하고, 대형 언어 모델(LLM)과 연동하여 효율적인 데이터 처리 파이프라인을 구축한 프로젝트입니다.</p>
                 </div>
             </div>
         </section>
@@ -88,6 +94,15 @@
     </footer>
 
     <script>
+        // 다국어 토글 시스템 로직
+        let currentLang = 'ko';
+        function toggleLanguage() {
+            currentLang = currentLang === 'ko' ? 'en' : 'ko';
+            const elements = document.querySelectorAll('[data-ko]');
+            elements.forEach(el => { el.innerText = el.getAttribute(`data-${currentLang}`); });
+            document.getElementById('lang-btn').innerText = currentLang === 'ko' ? '🇺🇸 EN' : '🇰🇷 KO';
+        }
+
         // 💻 백엔드 엔지니어 전용 디지털 매트릭스 배경 로직
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
