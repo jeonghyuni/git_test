@@ -17,20 +17,33 @@
         }
     </script>
     <style>
-        /* 원래 딱딱한 화살표 커서는 숨겨줍니다 */
+        /* 원래 마우스 커서는 숨겨줍니다 */
         body, a, button, input {
             cursor: none !important;
+        }
+        /* 파티클이 담길 캔버스를 배경 최하단에 확실히 고정 */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1; /* 다른 콘텐츠들 완전히 뒤로 배치 */
         }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 antialiased font-sans min-h-screen flex flex-col justify-between transition-colors duration-300 overflow-x-hidden">
 
-    <!-- [기능] 짱귀여운 고양이 발바닥 커서 (이모지 🐾 사용) -->
+    <!-- 은은한 배경 파티클 캔버스 (body 최상단에 배치) -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- 짱귀여운 고양이 발바닥 커서 -->
     <div id="animal-cursor" class="fixed text-3xl pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 select-none will-change-transform transition-all duration-100 ease-out">
         🐾
     </div>
 
-    <!-- [기능] 스크롤 진행률 상단 바 -->
+    <!-- 스크롤 진행률 상단 바 -->
     <div id="scroll-bar" class="fixed top-0 left-0 h-1 bg-sky-500 z-[100] transition-all duration-75" style="width: 0%;"></div>
 
     <!-- [공통] 네비게이션 바 -->
@@ -55,8 +68,8 @@
     <!-- 메인 콘텐츠 영역 -->
     <main class="max-w-3xl w-full mx-auto px-4 py-8 flex-grow space-y-8">
         
-        <!-- 기존 소개 섹션 -->
-        <section class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+        <!-- [수정] 구버전 Tailwind와 호환되도록 투명도 스타일 보정 -->
+        <section class="bg-white/90 dark:bg-slate-800/90 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
             <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">안녕하세요, 변정현입니다.</h2>
             <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">백엔드 시스템 아키텍처와 효율적인 AI 데이터 파이프라인 구현에 깊은 관심을 가지고 연구하며 개발해 나가고 있습니다.</p>
             <p class="text-slate-600 dark:text-slate-300 leading-relaxed">복잡한 데이터를 안정적으로 처리하고, 견고한 서버를 구축하는 과정에서 즐거움을 느깁니다.</p>
@@ -64,7 +77,7 @@
         </section>
 
         <!-- LocalStorage 기반 실시간 방명록 섹션 -->
-        <section class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+        <section class="bg-white/90 dark:bg-slate-800/90 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
             <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">한 줄 방명록</h2>
             
             <!-- 입력 폼 -->
@@ -82,29 +95,81 @@
     </main>
 
     <!-- 푸터 영역 -->
-    <footer class="bg-slate-100 dark:bg-slate-950 text-center py-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
+    <footer class="bg-slate-100/90 dark:bg-slate-950/90 text-center py-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
         <p class="text-slate-500 text-xs">&copy; 2026 Byeon Jeong-hyeon. All rights reserved.</p>
     </footer>
 
     <!-- 기능 제어 스크립트 -->
     <script>
-        // [수정] 동물 발바닥 커서 제어 스크립트
-        const cursor = document.getElementById('animal-cursor');
+        // 배경 파티클 애니메이션 로직
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
 
+        let particles = [];
+        const particleCount = 50; // 조금 더 잘 보이도록 개수 상향
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+                // 처음 켤 때 화면 전체에 흩뿌려진 상태로 시작하게 수정
+                this.y = Math.random() * canvas.height;
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 20;
+                this.size = Math.random() * 3 + 1; // 가루 크기를 살짝 더 키움 (시인성 확보)
+                this.speedY = Math.random() * 0.5 + 0.2; // 부드러운 속도
+                this.opacity = Math.random() * 0.6 + 0.2;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < -10) {
+                    this.reset();
+                }
+            }
+            draw() {
+                const isDark = document.documentElement.classList.contains('dark');
+                // 라이트모드에서는 약간 진한 하늘색, 다크모드에서는 밝은 흰색/하늘색으로 렌더링
+                ctx.fillStyle = isDark ? `rgba(224, 242, 254, ${this.opacity})` : `rgba(14, 165, 233, ${this.opacity * 0.4})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+
+        // 동물 발바닥 커서 제어
+        const cursor = document.getElementById('animal-cursor');
         window.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // 링크나 버튼에 마우스 올리면 발바닥이 뿅! 하고 커지는 효과 추가
         const interactiveElements = document.querySelectorAll('a, button, input');
         interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.classList.add('scale-150');
-            });
-            el.addEventListener('mouseleave', () => {
-                cursor.classList.remove('scale-150');
-            });
+            el.addEventListener('mouseenter', () => cursor.classList.add('scale-150'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('scale-150'));
         });
 
         // 1. 다크모드 토글

@@ -21,16 +21,28 @@
         body, a, button, input {
             cursor: none !important;
         }
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 antialiased font-sans min-h-screen flex flex-col justify-between transition-colors duration-300 overflow-x-hidden">
 
-    <!-- [기능] 🦊 영리하게 시스템을 빌드하는 여우 커서 -->
+    <!-- 💻 디지털 매트릭스 데이터 배경 캔버스 -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- 🦊 영리하게 시스템을 빌드하는 여우 커서 -->
     <div id="animal-cursor" class="fixed text-3xl pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 select-none will-change-transform transition-all duration-100 ease-out">
         🦊
     </div>
 
-    <!-- [기능] 스크롤 진행률 상단 바 -->
+    <!-- 스크롤 진행률 상단 바 -->
     <div id="scroll-bar" class="fixed top-0 left-0 h-1 bg-sky-500 z-[100] transition-all duration-75" style="width: 0%;"></div>
 
     <!-- [공통] 네비게이션 바 -->
@@ -54,7 +66,7 @@
 
     <!-- 메인 콘텐츠 영역 -->
     <main class="max-w-3xl w-full mx-auto px-4 py-8 flex-grow">
-        <section class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+        <section class="bg-white/90 dark:bg-slate-800/90 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
             <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">Projects</h2>
             <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6">그동안 진행해 온 주요 기술적 도전 과제들입니다.</p>
             <div class="space-y-6">
@@ -71,19 +83,74 @@
     </main>
 
     <!-- 푸터 영역 -->
-    <footer class="bg-slate-100 dark:bg-slate-950 text-center py-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
+    <footer class="bg-slate-100/90 dark:bg-slate-950/90 text-center py-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
         <p class="text-slate-500 text-xs">&copy; 2026 Byeon Jeong-hyeon. All rights reserved.</p>
     </footer>
 
     <script>
-        // 커서 제어
+        // 💻 백엔드 엔지니어 전용 디지털 매트릭스 배경 로직
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let codes = [];
+        const columnCount = 30;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class DataStream {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height;
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -40;
+                this.length = Math.random() * 15 + 5; // 사각형 줄 길이
+                this.speed = Math.random() * 2 + 1; // 떨어지는 속도
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.width = Math.random() * 1.5 + 0.5; // 디지털 라인 두께
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                const isDark = document.documentElement.classList.contains('dark');
+                // 라이트모드에선 세련된 에메랄드, 다크모드에선 사이버틱한 테크 그린 색상
+                ctx.strokeStyle = isDark ? `rgba(34, 197, 94, ${this.opacity})` : `rgba(16, 185, 129, ${this.opacity * 0.7})`;
+                ctx.lineWidth = this.width;
+                
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x, this.y + this.length);
+                ctx.stroke();
+            }
+        }
+
+        for (let i = 0; i < columnCount; i++) {
+            codes.push(new DataStream());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            codes.forEach(c => { c.update(); c.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 커서 및 공통 기능
         const cursor = document.getElementById('animal-cursor');
         window.addEventListener('mousemove', (e) => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
 
-        // 인터랙티브 확대 효과
         const interactiveElements = document.querySelectorAll('a, button, input');
         interactiveElements.forEach(el => {
             el.addEventListener('mouseenter', () => cursor.classList.add('scale-150'));
