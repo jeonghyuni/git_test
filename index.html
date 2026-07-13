@@ -4,36 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Byeon Jeong-hyeon | Home</title>
-    <!-- Tailwind CSS CDN 추가 -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col justify-between">
+<!-- 기본 스펙: 다크모드 대응을 위한 'dark:bg-slate-900' 등 설정 -->
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 antialiased font-sans min-h-screen flex flex-col justify-between transition-colors duration-300">
+
+    <!-- [기능 1] 스크롤 진행률 상단 바 -->
+    <div id="scroll-bar" class="fixed top-0 left-0 h-1 bg-sky-500 z-100 transition-all duration-75" style="width: 0%;"></div>
 
     <!-- [공통] 네비게이션 바 -->
     <header class="bg-slate-800 text-white shadow-md sticky top-0 z-50">
         <nav class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="text-xl font-bold tracking-tight">Jeonghyeon.B</div>
-            <ul class="flex space-x-6 text-sm font-medium">
-                <li><a href="index.html" class="text-sky-400 underline font-bold transition-colors">Home</a></li>
-                <li><a href="intro.html" class="hover:text-sky-400 hover:underline transition-colors">About</a></li>
-                <li><a href="projects.html" class="hover:text-sky-400 hover:underline transition-colors">Projects</a></li>
-            </ul>
+            <div class="flex items-center space-x-6">
+                <ul class="flex space-x-6 text-sm font-medium">
+                    <li><a href="index.html" class="text-sky-400 underline font-bold transition-colors">Home</a></li>
+                    <li><a href="intro.html" class="hover:text-sky-400 hover:underline transition-colors">About</a></li>
+                    <li><a href="projects.html" class="hover:text-sky-400 hover:underline transition-colors">Projects</a></li>
+                </ul>
+                
+                <!-- [기능 2] 다크모드 토글 버튼 -->
+                <button onclick="toggleDarkMode()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors">
+                    🌓 테마 변경
+                </button>
+            </div>
         </nav>
     </header>
 
     <!-- 메인 콘텐츠 영역 -->
-    <main class="max-w-3xl w-full mx-auto px-4 py-8 flex-grow">
-        <section class="bg-white p-8 rounded-xl shadow-xs border border-slate-100">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4 border-b-2 border-slate-100 pb-2">안녕하세요, 변정현입니다.</h2>
-            <p class="text-slate-600 leading-relaxed mb-4">백엔드 시스템 아키텍처와 효율적인 AI 데이터 파이프라인 구현에 깊은 관심을 가지고 연구하며 개발해 나가고 있습니다.</p>
-            <p class="text-slate-600 leading-relaxed">복잡한 데이터를 안정적으로 처리하고, 견고한 서버를 구축하는 과정에서 즐거움을 느낍니다.</p>
+    <main class="max-w-3xl w-full mx-auto px-4 py-8 flex-grow space-y-8">
+        
+        <!-- 기존 소개 섹션 -->
+        <section class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-xs border border-slate-100 dark:border-slate-700 transition-colors">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">안녕하세요, 변정현입니다.</h2>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">백엔드 시스템 아키텍처와 효율적인 AI 데이터 파이프라인 구현에 깊은 관심을 가지고 연구하며 개발해 나가고 있습니다.</p>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">복잡한 데이터를 안정적으로 처리하고, 견고한 서버를 구축하는 과정에서 즐거움을 느깁니다.</p>
+            <p class="text-xs text-slate-400 mt-4">💡 꿀팁: 화면 어디서나 키보드로 <span class="font-mono text-sky-500 font-bold">ssafy</span>를 연속으로 타이핑해보세요! (이스터에그)</p>
         </section>
+
+        <!-- [기능 3] LocalStorage 기반 실시간 방명록 섹션 -->
+        <section class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-xs border border-slate-100 dark:border-slate-700 transition-colors">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">한 줄 방명록</h2>
+            
+            <!-- 입력 폼 -->
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="guestbook-input" placeholder="응원 한 마디를 남겨주세요!" class="flex-grow px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-sky-500">
+                <button onclick="addMessage()" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-colors whitespace-nowrap">등록</button>
+            </div>
+
+            <!-- 메시지 출력 리스트 -->
+            <ul id="guestbook-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                <!-- 자바스크립트로 동적 렌더링 영역 -->
+            </ul>
+        </section>
+
     </main>
 
     <!-- 푸터 영역 -->
-    <footer class="bg-slate-100 text-center py-6 border-t border-slate-200">
+    <footer class="bg-slate-100 dark:bg-slate-950 text-center py-6 border-t border-slate-200 dark:border-slate-800 transition-colors">
         <p class="text-slate-500 text-xs">&copy; 2026 Byeon Jeong-hyeon. All rights reserved.</p>
     </footer>
 
+    <!-- 기능 제어 스크립트 -->
+    <script>
+        // 1. 다크모드 토글 로직
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // 2. 스크롤 진행률 바 로직
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercentage = (scrollTop / scrollHeight) * 100;
+            document.getElementById('scroll-bar').style.width = scrollPercentage + '%';
+        });
+
+        // 3. LocalStorage 방명록 로직
+        function loadMessages() {
+            const list = document.getElementById('guestbook-list');
+            list.innerHTML = '';
+            const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            
+            if (messages.length === 0) {
+                list.innerHTML = `<li class="text-slate-400 text-sm text-center py-4">아직 작성된 방명록이 없습니다. 첫 글을 남겨보세요!</li>`;
+                return;
+            }
+
+            messages.forEach((msg, index) => {
+                const li = document.createElement('li');
+                li.className = "bg-slate-50 dark:bg-slate-700/50 px-4 py-2.5 rounded-lg text-sm text-slate-700 dark:text-slate-300 flex justify-between items-center border border-slate-100 dark:border-slate-700/30";
+                li.innerHTML = `
+                    <span>${msg}</span>
+                    <button onclick="deleteMessage(${index})" class="text-rose-500 hover:text-rose-600 text-xs cursor-pointer ml-2">삭제</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addMessage() {
+            const input = document.getElementById('guestbook-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            messages.unshift(text); // 최신글이 위로 오도록 추가
+            localStorage.setItem('messages', JSON.stringify(messages));
+            
+            input.value = '';
+            loadMessages();
+        }
+
+        function deleteMessage(index) {
+            const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+            messages.splice(index, 1);
+            localStorage.setItem('messages', JSON.stringify(messages));
+            loadMessages();
+        }
+
+        // 4. 게이미피케이션 (이스터에그: 'ssafy' 연속 타이핑)
+        let inputLog = '';
+        window.addEventListener('keydown', (e) => {
+            inputLog += e.key.toLowerCase();
+            if (inputLog.length > 10) inputLog = inputLog.substring(inputLog.length - 10);
+            
+            if (inputLog.includes('ssafy')) {
+                alert('🎉 이스터에그 발견! 대단해요 정현님! SSAFY 전공트랙 마스터 칭호를 획득하셨습니다! 🎉');
+                inputLog = ''; // 로그 초기화
+            }
+        });
+
+        // 페이지 로드 시 방명록 불러오기
+        window.onload = loadMessages;
+    </script>
 </body>
 </html>
