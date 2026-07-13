@@ -56,6 +56,10 @@
                     <li><a href="intro.html" class="hover:text-sky-400 hover:underline transition-colors">About</a></li>
                     <li><a href="projects.html" class="hover:text-sky-400 hover:underline transition-colors">Projects</a></li>
                 </ul>
+                <!-- 다국어 토글 버튼 -->
+                <button onclick="toggleLanguage()" id="lang-btn" class="bg-sky-600 hover:bg-sky-500 px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors">
+                    🇺🇸 EN
+                </button>
                 
                 <!-- 다크모드 토글 버튼 -->
                 <button onclick="toggleDarkMode()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors">
@@ -68,28 +72,26 @@
     <!-- 메인 콘텐츠 영역 -->
     <main class="max-w-3xl w-full mx-auto px-4 py-8 flex-grow space-y-8">
         
-        <!-- [수정] 구버전 Tailwind와 호환되도록 투명도 스타일 보정 -->
+        <!-- 소개 섹션 -->
         <section class="bg-white/90 dark:bg-slate-800/90 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">안녕하세요, 변정현입니다.</h2>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">백엔드 시스템 아키텍처와 효율적인 AI 데이터 파이프라인 구현에 깊은 관심을 가지고 연구하며 개발해 나가고 있습니다.</p>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">복잡한 데이터를 안정적으로 처리하고, 견고한 서버를 구축하는 과정에서 즐거움을 느깁니다.</p>
-            <p class="text-xs text-slate-400 mt-4">💡 꿀팁: 화면 어디서나 키보드로 <span class="font-mono text-sky-500 font-bold">ssafy</span>를 연속으로 타이핑해보세요! (이스터에그)</p>
+            <h2 data-ko="안녕하세요, 변정현입니다." data-en="Hello, I'm Jeonghyeon Byeon." class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">안녕하세요, 변정현입니다.</h2>
+            <p data-ko="백엔드 시스템 아키텍처와 효율적인 AI 데이터 파이프라인 구현에 깊은 관심을 가지고 연구하며 개발해 나가고 있습니다." data-en="I am deeply passionate about researching and developing backend system architectures and efficient AI data pipelines." class="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">백엔드 시스템 아키텍처와 효율적인 AI 데이터 파이프라인 구현에 깊은 관심을 가지고 연구하며 개발해 나가고 있습니다.</p>
+            <p data-ko="복잡한 데이터를 안정적으로 처리하고, 견고한 서버를 구축하는 과정에서 즐거움을 느깁니다." data-en="I find great joy in reliably processing complex data and building robust server environments." class="text-slate-600 dark:text-slate-300 leading-relaxed">복잡한 데이터를 안정적으로 처리하고, 견고한 서버를 구축하는 과정에서 즐거움을 느깁니다.</p>
+            <p data-ko="💡 꿀팁: 화면 어디서나 키보드로 ssafy를 연속으로 타이핑해보세요! (이스터에그)" data-en="💡 Tip: Type 'ssafy' anywhere on the screen for a hidden surprise!" class="text-xs text-slate-400 mt-4">💡 꿀팁: 화면 어디서나 키보드로 <span class="font-mono text-sky-500 font-bold">ssafy</span>를 연속으로 타이핑해보세요! (이스터에그)</p>
         </section>
 
         <!-- LocalStorage 기반 실시간 방명록 섹션 -->
         <section class="bg-white/90 dark:bg-slate-800/90 p-8 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">한 줄 방명록</h2>
+            <h2 data-ko="한 줄 방명록" data-en="Guestbook" class="text-2xl font-bold text-slate-900 dark:text-white mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-2">한 줄 방명록</h2>
             
             <!-- 입력 폼 -->
             <div class="flex gap-2 mb-6">
                 <input type="text" id="guestbook-input" placeholder="응원 한 마디를 남겨주세요!" class="flex-grow px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-sky-500">
-                <button onclick="addMessage()" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-colors whitespace-nowrap">등록</button>
+                <button onclick="addMessage()" data-ko="등록" data-en="Post" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-colors whitespace-nowrap">등록</button>
             </div>
 
             <!-- 메시지 출력 리스트 -->
-            <ul id="guestbook-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
-                <!-- 자바스크립트로 동적 렌더링 영역 -->
-            </ul>
+            <ul id="guestbook-list" class="space-y-2 max-h-48 overflow-y-auto pr-2"></ul>
         </section>
 
     </main>
@@ -101,6 +103,19 @@
 
     <!-- 기능 제어 스크립트 -->
     <script>
+        // 다국어 토글 로직
+        let currentLang = 'ko';
+        function toggleLanguage() {
+            currentLang = currentLang === 'ko' ? 'en' : 'ko';
+            const elements = document.querySelectorAll('[data-ko]');
+            elements.forEach(el => { el.innerText = el.getAttribute(`data-${currentLang}`); });
+            
+            // 인풋 플레이스홀더 다국어 분기 처리
+            const input = document.getElementById('guestbook-input');
+            if(input) input.placeholder = currentLang === 'ko' ? '응원 한 마디를 남겨주세요!' : 'Leave a supportive message!';
+
+            document.getElementById('lang-btn').innerText = currentLang === 'ko' ? '🇺🇸 EN' : '🇰🇷 KO';
+        }
         // 배경 파티클 애니메이션 로직
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
